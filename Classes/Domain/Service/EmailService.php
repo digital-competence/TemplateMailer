@@ -105,6 +105,10 @@ class EmailService
         $plaintextBody = $this->renderEmailBody($templateName, $targetPackage, 'txt', $variables);
         $htmlBody = $this->renderEmailBody($templateName, $targetPackage, 'html', $variables);
 
+        $subjectView = new StandaloneView();
+        $subjectView->setTemplateSource($subject);
+        $subjectView->assignMultiple($variables);
+
         $senderAddress = $this->resolveSenderAddress($sender);
 
         $mail = new Message();
@@ -112,7 +116,7 @@ class EmailService
             ->setTo($recipient)
             ->setCc($cc)
             ->setBcc($bcc)
-            ->setSubject($subject)
+            ->setSubject($subjectView->render())
             ->setBody($plaintextBody)
             ->addPart($htmlBody, 'text/html');
 
